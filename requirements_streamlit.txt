@@ -16,9 +16,12 @@ numpy>=1.24.0
 crewai>=0.30.0
 langchain>=0.1.0
 langchain-openai>=0.0.8
-faiss-cpu>=1.7.4
+faiss-cpu==1.10.0
 python-dotenv>=1.0.0
 sentence-transformers>=2.2.2
+
+# arXiv integration
+arxiv>=2.3.0
 
 # Additional for real-time features
 streamlit-autorefresh>=0.0.1

@@ -82,6 +82,39 @@ OPENAI_API_KEY=your_openai_api_key_here
 OTEL_SDK_DISABLED=true
 ```
 
+### Building the Knowledge Base
+
+To enable evidence retrieval from mathematical papers:
+
+**Step 1: Fetch Papers from arXiv**
+
+Download LaTeX source files for Number Theory and Algebraic Topology:
+
+```bash
+python fetch_arxiv.py
+```
+
+This downloads 20 papers from each category:
+- Number Theory (math.NT)
+- Algebraic Topology (math.AT)
+
+LaTeX sources are organized in `papers/Number_Theory/` and `papers/Algebraic_Topology/`.
+
+**Step 2: Build Indices**
+
+Process the papers and build the FAISS index:
+
+```bash
+python ingest.py
+```
+
+This creates the `index/` directory with:
+- `faiss.index` - Vector similarity search index
+- `meta.pkl` - Document metadata
+- `symbol_index.json` - LaTeX symbol mappings
+
+**Note**: The system can run without indices, but won't have access to paper evidence for reasoning.
+
 ## Usage
 
 ### Streamlit Web Interface

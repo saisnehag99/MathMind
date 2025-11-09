@@ -20,15 +20,15 @@ DELAY_BETWEEN_CATEGORIES = 2  # Seconds to wait between categories to be polite 
 CATEGORIES = [
     ("NT", "Number_Theory"),
     ("AT", "Algebraic_Topology"),
-    (("AG, Algebraic_Geometry"),
-("CA", "Commutative_Algebra"),
-("GM", "General_Mathematics"),
-("GT", "General_Topology"),
-("GR", "Group_Theory"),
-("KT", "KTheory_Homology"),
-("RA", "Rings_Algebras"),
-("RT", "Representation_Theory"),
-("LO", "Logic")
+    ("AG, Algebraic_Geometry"),
+    ("CA", "Commutative_Algebra"),
+    ("GM", "General_Mathematics"),
+    ("GT", "General_Topology"),
+    ("GR", "Group_Theory"),
+    ("KT", "KTheory_Homology"),
+    ("RA", "Rings_Algebras"),
+    ("RT", "Representation_Theory"),
+    ("LO", "Logic")
 ]
 
 def ensure_directory(path):

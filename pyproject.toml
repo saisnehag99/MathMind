@@ -1,48 +1,94 @@
 [tool.poetry]
-name = "multiagents"
-version = "0.1.0"
-description = "A multi-agent system for number theory research with semantic search and symbolic reasoning"
-authors = ["Your Name <your.email@example.com>"]
+name = "mathind"
+version = "1.0.0"
+description = "Collaborative AI Mathematical Proof System - Multi-agent architecture for generating and verifying mathematical conjectures"
+authors = ["saisneha, umamaheswar"]
 readme = "README.md"
-packages = [{include = "*.py"}]
+license = "MIT"
+homepage = "https://github.com/yourusername/MathMind"
+repository = "https://github.com/yourusername/MathMind"
+keywords = ["mathematics", "AI", "proof-system", "crewai", "streamlit"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.14"
-langchain = "^0.1.0"
-langchain-community = "^0.0.38"
-langchain-openai = "^0.0.8"
-langchain-text-splitters = "^0.0.1"
-sentence-transformers = "^2.2.2"
-faiss-cpu = "^1.7.4"
-numpy = "^1.24.0"
-pypdf = "^3.17.0"
-openai = "^1.0.0"
-python-dotenv = "^1.2.1"
-crewai = "*"
-streamlit = "^1.51.0"
-plotly = "^6.4.0"
-arxiv = "^2.3.0"
-pandas = "^2.0.0"
+
+# Core Streamlit
+streamlit = ">=1.28.0"
+
+# Visualization
+plotly = ">=5.17.0"
+networkx = ">=3.1"
+matplotlib = ">=3.7.0"
+
+# Data handling
+pandas = ">=2.0.0"
+numpy = ">=1.24.0"
+
+# AI/ML Framework
+crewai = ">=0.30.0"
+langchain = ">=0.1.0"
+langchain-openai = ">=0.0.8"
+
+# Vector search
+faiss-cpu = "1.10.0"
+
+# Environment and utilities
+python-dotenv = ">=1.0.0"
+
+# Embeddings
+sentence-transformers = ">=2.2.2"
+
+# arXiv integration
+arxiv = ">=2.3.0"
+
+# Google Generative AI (optional for markdown reports)
+google-generativeai = {version = ">=0.3.0", optional = true}
+
+# Real-time features
+streamlit-autorefresh = ">=0.0.1"
+watchdog = ">=3.0.0"
+
+[tool.poetry.extras]
+genai = ["google-generativeai"]
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.0"
-black = "^23.7.0"
-isort = "^5.12.0"
-flake8 = "^6.1.0"
-
-[tool.poetry.scripts]
-ingest = "ingest:build_indices"
-run-session = "run_session:main"
+pytest = ">=7.0.0"
+black = ">=23.0.0"
+flake8 = ">=6.0.0"
+mypy = ">=1.0.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry.scripts]
+mathind-streamlit = "streamlit run streamlit_app:app"
+
+# Black configuration
 [tool.black]
 line-length = 100
-target-version = ['py39']
+target-version = ['py310', 'py311', 'py312', 'py313']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | myenv
+  | papers
+  | index
+)/
+'''
 
-[tool.isort]
-profile = "black"
-line_length = 100
-
+# MyPy configuration
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true

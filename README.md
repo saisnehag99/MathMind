@@ -78,13 +78,25 @@ pip install -r requirements_streamlit.txt
 Create a `.env` file in the project root:
 
 ```env
+# Required: OpenAI API for the proof system
 OPENAI_API_KEY=your_openai_api_key_here
+
+# Required: Disable telemetry and fix OpenMP conflicts
 OTEL_SDK_DISABLED=true
+KMP_DUPLICATE_LIB_OK=TRUE
+
+# Optional: Google Gemini API for enhanced markdown report generation
+# GOOGLE_API_KEY=your_google_api_key_here
 ```
 
-### Building the Knowledge Base
+**Notes**:
+- `OPENAI_API_KEY` is **required** for the proof system to work
+- `KMP_DUPLICATE_LIB_OK=TRUE` is needed on macOS to prevent OpenMP library conflicts
+- `GOOGLE_API_KEY` is **optional** - only needed if you want AI-generated markdown reports. Without it, you can still export results as JSON.
 
-To enable evidence retrieval from mathematical papers:
+### Building the Knowledge Base (Required)
+
+**Important**: You must complete both steps below to generate the index files required for the system to retrieve evidence from mathematical papers.
 
 **Step 1: Fetch Papers from arXiv**
 
@@ -94,26 +106,44 @@ Download LaTeX source files for Number Theory and Algebraic Topology:
 python fetch_arxiv.py
 ```
 
-This downloads 20 papers from each category:
-- Number Theory (math.NT)
-- Algebraic Topology (math.AT)
+This downloads 20 papers from each of the following math categories:
+- **Number Theory** (math.NT)
+- **Algebraic Topology** (math.AT)
+- **Algebraic Geometry** (math.AG)
+- **Commutative Algebra** (math.CA)
+- **General Mathematics** (math.GM)
+- **General Topology** (math.GT)
+- **Group Theory** (math.GR)
+- **K-Theory & Homology** (math.KT)
+- **Rings & Algebras** (math.RA)
+- **Representation Theory** (math.RT)
+- **Logic** (math.LO)
 
-LaTeX sources are organized in `papers/Number_Theory/` and `papers/Algebraic_Topology/`.
+LaTeX sources are automatically extracted and organized in category-specific directories under `papers/`
 
-**Step 2: Build Indices**
+Metadata for each category is saved as CSV files.
 
-Process the papers and build the FAISS index:
+**Step 2: Build Indices (Required for Evidence Retrieval)**
+
+Process the LaTeX sources and build the FAISS index:
 
 ```bash
 python ingest.py
 ```
 
-This creates the `index/` directory with:
-- `faiss.index` - Vector similarity search index
-- `meta.pkl` - Document metadata
-- `symbol_index.json` - LaTeX symbol mappings
+This will:
+1. Read all LaTeX `.tex` files from both categories
+2. Extract mathematical content and symbols
+3. Generate vector embeddings (using sentence-transformers or OpenAI)
+4. Build a FAISS index for semantic search
+5. Create symbol-based index for LaTeX commands
 
-**Note**: The system can run without indices, but won't have access to paper evidence for reasoning.
+Output (in `index/` directory):
+- `faiss.index` - Vector similarity search index for semantic retrieval
+- `meta.pkl` - Document metadata (chunks, sources, arXiv IDs)
+- `symbol_index.json` - LaTeX symbol to chunk mappings
+
+**Note**: Without running `ingest.py`, the system will fail to load the retriever and cannot access paper evidence. The ingestion process may take several minutes depending on the number of papers.
 
 ## Usage
 

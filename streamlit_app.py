@@ -5,6 +5,7 @@ Displays agent conversations in real-time and shows results with expandable sect
 
 import streamlit as st
 import sys
+import os
 import io
 import re
 import json
@@ -17,6 +18,15 @@ from typing import Optional
 
 # Import the proof system from main.py
 from main import ProofSystem
+
+# Import Google Generative AI for markdown report generation
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+except ImportError:
+    GENAI_AVAILABLE = False
+    print("Warning: google-generativeai not installed. Markdown export will be disabled.")
 
 # Page configuration
 st.set_page_config(
@@ -396,71 +406,75 @@ if st.session_state.results and not st.session_state.processing:
 
     with col2:
         # Markdown download
+        if GENAI_AVAILABLE:
+            prompt = f"""
+            You are a mathematical reasoning summarization assistant.
 
-        prompt = f"""
-        You are a mathematical reasoning summarization assistant.
+            You will be given structured content summarizing results about a mathematical investigation.
 
-        You will be given structured content summarizing results about a mathematical investigation.
-
-        Your task is to produce a collective insight report in Markdown format that captures the reasoning flow and synthesis of results.
-
-
-
-        # Input Data
-        results = {results}
+            Your task is to produce a collective insight report in Markdown format that captures the reasoning flow and synthesis of results.
 
 
 
-        # Output Requirements
+            # Input Data
+            results = {results}
 
-        Generate a concise Markdown report (300–400 words) with the following structure:
 
-        # Title
 
-        A short, descriptive title summarizing the topic.
+            # Output Requirements
 
-        ## 1. Overview
+            Generate a concise Markdown report (300–400 words) with the following structure:
 
-        Summarize the mathematical question and investigation focus.
+            # Title
 
-        ## 2. Core Insights
+            A short, descriptive title summarizing the topic.
 
-        Integrate findings across all conjectures — describe what patterns emerged, what remains unproven, and the degree of confidence in current understanding.
+            ## 1. Overview
 
-        ## 3. Reasoning Traces
+            Summarize the mathematical question and investigation focus.
 
-        Replace formal citations with reasoning-trace explanations that clarify how each inference or statement follows from prior analysis.
+            ## 2. Core Insights
 
-        Each reasoning-trace should look like this:
+            Integrate findings across all conjectures — describe what patterns emerged, what remains unproven, and the degree of confidence in current understanding.
 
-        > (reasoning trace: derived from numerical patterns without formal analytic proof)
+            ## 3. Reasoning Traces
 
-        These reasoning traces should narrate the logical flow — from numerical evidence → theoretical expectation → current uncertainty.
+            Replace formal citations with reasoning-trace explanations that clarify how each inference or statement follows from prior analysis.
 
-        ## 4. Future Research Directions
+            Each reasoning-trace should look like this:
 
-        List collective next steps inferred from the conjectures and reasoning process.
+            > (reasoning trace: derived from numerical patterns without formal analytic proof)
 
-        ## 5. Collective Reasoning Summary
+            These reasoning traces should narrate the logical flow — from numerical evidence → theoretical expectation → current uncertainty.
 
-        Conclude with a short, reflective summary describing how reasoning evolved across conjectures and what it implies for future proof development.
+            ## 4. Future Research Directions
 
-        # Output Format
+            List collective next steps inferred from the conjectures and reasoning process.
 
-        Respond only with the final Markdown report. Do not include JSON, code.
-        """
+            ## 5. Collective Reasoning Summary
 
-        model = genai.GenerativeModel("gemini-1.5-pro")
-        response = model.generate_content(prompt)
+            Conclude with a short, reflective summary describing how reasoning evolved across conjectures and what it implies for future proof development.
 
-        markdown_content = response.text
+            # Output Format
 
-        st.download_button(
-            label="📥 Download as Markdown",
-            data=markdown_content,
-            file_name=f"proof_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
-            mime="text/markdown"
-        )
+            Respond only with the final Markdown report. Do not include JSON, code.
+            """
+
+            try:
+                model = genai.GenerativeModel("gemini-2.5-pro")
+                response = model.generate_content(prompt)
+                markdown_content = response.text
+
+                st.download_button(
+                    label="📥 Download as Markdown",
+                    data=markdown_content,
+                    file_name=f"proof_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+                    mime="text/markdown"
+                )
+            except Exception as e:
+                st.error(f"Error generating markdown report: {e}")
+        else:
+            st.info("Markdown export requires google-generativeai package. Install with: pip install google-generativeai")
 
 # Footer
 st.markdown("---")

@@ -23,6 +23,9 @@ sentence-transformers>=2.2.2
 # arXiv integration
 arxiv>=2.3.0
 
+# Google Generative AI for markdown reports (optional)
+google-generativeai>=0.3.0
+
 # Additional for real-time features
 streamlit-autorefresh>=0.0.1
 watchdog>=3.0.0

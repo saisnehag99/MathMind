@@ -20,7 +20,7 @@ DELAY_BETWEEN_CATEGORIES = 2  # Seconds to wait between categories to be polite 
 CATEGORIES = [
     ("NT", "Number_Theory"),
     ("AT", "Algebraic_Topology"),
-    ("AG, Algebraic_Geometry"),
+    ("AG", "Algebraic_Geometry"),
     ("CA", "Commutative_Algebra"),
     ("GM", "General_Mathematics"),
     ("GT", "General_Topology"),
